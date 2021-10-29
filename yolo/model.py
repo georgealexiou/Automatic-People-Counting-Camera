@@ -37,8 +37,8 @@ class Yolo:
                 padding='same'
             )
         )
-
-#https://www.tensorflow.org/api_docs/python/tf/keras/layers/BatchNormalization
+        
+        #https://www.tensorflow.org/api_docs/python/tf/keras/layers/BatchNormalization
         
         darknet.add(
             layers.Conv2D(
