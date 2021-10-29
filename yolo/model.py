@@ -12,10 +12,11 @@ from keras.utils.generic_utils import get_custom_objects
 
 
 class Yolo:
-    def __init__(self, stride=2, pool=2):
+    def __init__(self, s, stride=2, pool=2):
         self.stride = stride
         self.pool = pool
         self.math_util = MathUtil()
+        self.s = s
     
     def create_arch(self):
         
@@ -205,9 +206,28 @@ class Yolo:
             )
         )
 
+        # Tired nonsene
+        S, B, C = split, num_boxes, 1
+
+        # tf.keras.layers.Dense(
+        #     units,
+        #     activation=None,
+        #     use_bias=True,
+        #     kernel_initializer="glorot_uniform",
+        #     bias_initializer="zeros",
+        #     kernel_regularizer=None,
+        #     bias_regularizer=None,
+        #     activity_regularizer=None,
+        #     kernel_constraint=None,
+        #     bias_constraint=None,
+        #     **kwargs
+        # )
+
+
         return darknet 
 
 
 if __name__ == "__main__":
     lol = Yolo()
-    lol.create_arch()
+    model = lol.create_arch()
+    model.summary()
