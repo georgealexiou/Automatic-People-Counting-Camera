@@ -11,24 +11,6 @@ from keras import backend as K
 from keras.utils.generic_utils import get_custom_objects
 
 
-
-# model = models.Sequential()
-# model.add(layers.Conv2D(32, kernel_size=(3,3), activation="relu", input_shape=(28, 28, 1)))
-# model.add(layers.MaxPooling2D(pool_size=(2,2)))
-# model.add(layers.Conv2D(64, kernel_size=(3,3), activation="relu"))
-# model.add(layers.MaxPooling2D(pool_size = (2,2)))
-# model.add(layers.Conv2D(64, kernel_size=(3,3), activation="relu"))
-# model.add(layers.Flatten())
-# model.add(layers.Dropout(0.5))
-# model.add(layers.Dense(num_classes, activation="softmax"))----------
-
-from keras import backend as K
-
-def custom_activation(x):
-    return (K.sigmoid(x) * 5) - 1
-
-# model.add(Dense(32 , activation=custom_activation))
-
 class Yolo:
     def __init__(self, stride=2, pool=2):
         self.stride = stride
@@ -36,55 +18,192 @@ class Yolo:
         self.math_util = MathUtil()
     
     def create_arch(self):
-        darknet = models.Sequential()
         
+        darknet = models.Sequential()
         darknet.add(
             layers.Conv2D(
                 64, 
                 kernel_size=(7,7),
-                strides=(2, 2), 
+                strides=self.stride, 
                 activation=self.math_util.leaky_relu(0.1),
                 padding='same',
-                input_shape=(448, 448, 3))
+                input_shape=(448, 448, 3)
             )
+        )
         darknet.add(
             layers.MaxPool2D(
                 pool_size=(2,2),
-                strides=2, 
-                padding='same')
+                strides=self.stride, 
+                padding='same'
             )
+        )
+
+#https://www.tensorflow.org/api_docs/python/tf/keras/layers/BatchNormalization
         
+        darknet.add(
+            layers.Conv2D(
+                192, 
+                kernel_size=(3,3),
+                activation=self.math_util.leaky_relu(0.1),
+                padding='same',
+                input_shape=(112, 112, 192)
+            )
+        )
+        darknet.add(
+            layers.MaxPool2D(
+                pool_size=(2,2),
+                strides=self.stride, 
+                padding='same'
+            )
+        )
+
+
+
+        darknet.add(
+            layers.Conv2D(
+                128, 
+                kernel_size=(1,1),
+                activation=self.math_util.leaky_relu(0.1),
+                input_shape=(56, 56, 256)
+            )
+        )
+        darknet.add(
+            layers.Conv2D(
+                256, 
+                kernel_size=(3,3),
+                activation=self.math_util.leaky_relu(0.1),
+                padding='same',
+                input_shape=(56, 56, 256)
+            )
+        )
+        darknet.add(
+            layers.Conv2D(
+                256, 
+                kernel_size=(1,1),
+                activation=self.math_util.leaky_relu(0.1),
+                input_shape=(56, 56, 256)
+            )
+        )
+        darknet.add(
+            layers.Conv2D(
+                512, 
+                kernel_size=(3,3),
+                activation=self.math_util.leaky_relu(0.1),
+                padding='same',
+                input_shape=(56, 56, 256)
+            )
+        )
+        darknet.add(
+            layers.MaxPool2D(
+                pool_size=(2,2),
+                strides=self.stride, 
+                padding='same'
+            )
+        )
+
         for _ in range(4):
-            print("IOUVY")
-            
+            darknet.add(
+                layers.Conv2D(
+                    256, 
+                    kernel_size=(1,1),
+                    activation=self.math_util.leaky_relu(0.1),
+                    input_shape=(28, 28, 512)
+                )
+            )
+            darknet.add(
+                layers.Conv2D(
+                    512, 
+                    kernel_size=(3,3),
+                    activation=self.math_util.leaky_relu(0.1),
+                    padding='same',
+                    input_shape=(28, 28, 512)
+                )
+            )
+        darknet.add(
+            layers.Conv2D(
+                512, 
+                kernel_size=(1,1),
+                activation=self.math_util.leaky_relu(0.1),
+                input_shape=(28, 28, 512)
+            )
+        )
+        darknet.add(
+            layers.Conv2D(
+                1024, 
+                kernel_size=(3,3),
+                activation=self.math_util.leaky_relu(0.1),
+                padding='same',
+                input_shape=(28, 28, 512)
+            )
+        )
+        darknet.add(
+            layers.MaxPool2D(
+                pool_size=(2,2),
+                strides=self.stride, 
+                padding='same'
+            )
+        )
 
 
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
-        # darknet.add()
+
+        for _ in range(2):
+            darknet.add(
+                layers.Conv2D(
+                    512, 
+                    kernel_size=(1,1),
+                    activation=self.math_util.leaky_relu(0.1),
+                    input_shape=(14, 14, 1024)
+                )
+            )
+            darknet.add(
+                layers.Conv2D(
+                    1024, 
+                    kernel_size=(3,3),
+                    activation=self.math_util.leaky_relu(0.1),
+                    padding='same',
+                    input_shape=(14, 14, 1024)
+                )
+            )
+        darknet.add(
+            layers.Conv2D(
+                1024, 
+                kernel_size=(3,3),
+                activation=self.math_util.leaky_relu(0.1),
+                padding='same',
+                input_shape=(14, 14, 1024)
+            )
+        )
+        darknet.add(
+            layers.Conv2D(
+                1024, 
+                kernel_size=(3,3),
+                strides=self.stride, 
+                activation=self.math_util.leaky_relu(0.1),
+                padding='same',
+                input_shape=(14, 14, 1024)
+            )
+        )
+
+
+
+        darknet.add(
+            layers.Conv2D(
+                1024, 
+                kernel_size=(3,3),
+                activation=self.math_util.leaky_relu(0.1),
+                padding='same',
+                input_shape=(7, 7, 1024)
+            )
+        )
+        darknet.add(
+            layers.Conv2D(
+                1024, 
+                kernel_size=(3,3),
+                activation=self.math_util.leaky_relu(0.1),
+                padding='same',
+                input_shape=(7, 7, 1024)
+            )
+        )
 
         return darknet 
 
