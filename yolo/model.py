@@ -38,6 +38,8 @@ class Yolo:
         # Flatten, FCL, OPL
         darknet.add(layers.Flatten())
         darknet.add(layers.Dense(units=4096))
+        darknet.add(layers.Dropout(0.0))
+        darknet.add(layers.Activation(activation=self.math_util.leaky_relu(0.1)))
         darknet.add(layers.Dense(units=self.math_util.calculate_prediction_encoding(),activation = 'relu'))
         
         # Reshape tensor (S,S, B*5+C)
