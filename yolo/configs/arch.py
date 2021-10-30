@@ -1,18 +1,29 @@
+# Image dimensions, number of cells
+INPUT_CONFIG = {
+    "image_width": 448,
+    "image_height": 448,
+    "image_channels": 3,
+    "B_grid": 19,
+    "C_classes": 1
+}
+
+
 # (kernel_size, filters, stride, padding)
 CNN_CONFIG = [
+    "INPUT_LAYER",
     (7, 64, 2, 3),
-    "M",
+    "MAX_POOL",
     (3, 192, 1, 1),
-    "M",
+    "MAX_POOL",
     (1, 128, 1, 0),
     (3, 256, 1, 1),
     (1, 256, 1, 0),
     (3, 512, 1, 1),
-    "M",
+    "MAX_POOL",
     [(1, 256, 1, 0), (3, 512, 1, 1), 4],
     (1, 512, 1, 0),
     (3, 1024, 1, 1),
-    "M",
+    "MAX_POOL",
     [(1, 512, 1, 0), (3, 1024, 1, 1), 2],
     (3, 1024, 1, 1),
     (3, 1024, 2, 1),
