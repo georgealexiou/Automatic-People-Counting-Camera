@@ -3,7 +3,8 @@ INPUT_CONFIG = {
     "image_width": 448,
     "image_height": 448,
     "image_channels": 3,
-    "B_grid": 19,
+    "S_grid": 7,
+    "B_predictions": 19,
     "C_classes": 1
 }
 

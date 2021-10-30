@@ -1,8 +1,17 @@
 from tensorflow.keras.backend import maximum
 import numpy as np
+from configs.arch import INPUT_CONFIG
 
 
 class MathUtil:
+
+    def calculate_prediction_encoding(self):
+        s_sqr = (INPUT_CONFIG["S_grid"] * INPUT_CONFIG["S_grid"])
+        box_x5 = (INPUT_CONFIG["B_predictions"] * 5)
+        c_classes = INPUT_CONFIG["C_classes"]
+        return s_sqr * (box_x5 + c_classes)
+
+
     def leaky_relu(self, alpha):
         return lambda val: maximum(alpha * val, val)
 

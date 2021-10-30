@@ -36,24 +36,22 @@ class Yolo:
                     darknet.add(self.create_conv2d_layer(kernel_size=i[1][0], filters=i[1][1], strides=i[1][2]))
         
         # Flatten, FCL, OPL
-        print("Prefinal")
-
         darknet.add(layers.Flatten())
         darknet.add(layers.Dense(units=4096))
         
-        # pred_encoding S * S * ( B * 5 + C)
+
+        print("[INFO] Prediction encoding", self.math_util.calculate_prediction_encoding)
+
         darknet.add(
             layers.Dense(
-                units=(
-                    (INPUT_CONFIG["image_width"] * INPUT_CONFIG["image_height"]) * 
-                    ((INPUT_CONFIG["B_grid"] * 5) + INPUT_CONFIG["C_classes"])),
+                units=self.math_util.calculate_prediction_encoding(),
                 activation = 'relu'
             )
         )
+
+        print("[INFO] Completed")
         
         return darknet
-
-    
 
     def create_input_layer(self):
         return layers.InputLayer(
