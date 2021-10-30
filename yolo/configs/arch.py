@@ -1,3 +1,4 @@
+# (kernel_size, filters, stride, padding)
 CNN_CONFIG = [
     (7, 64, 2, 3),
     "M",
