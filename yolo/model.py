@@ -38,18 +38,10 @@ class Yolo:
         # Flatten, FCL, OPL
         darknet.add(layers.Flatten())
         darknet.add(layers.Dense(units=4096))
+        darknet.add(layers.Dense(units=self.math_util.calculate_prediction_encoding(),activation = 'relu'))
         
-
-        print("[INFO] Prediction encoding", self.math_util.calculate_prediction_encoding)
-
-        darknet.add(
-            layers.Dense(
-                units=self.math_util.calculate_prediction_encoding(),
-                activation = 'relu'
-            )
-        )
-
-        print("[INFO] Completed")
+        # Reshape tensor (S,S, B*5+C)
+        darknet.add(layers.Reshape((INPUT_CONFIG['S_grid'], INPUT_CONFIG['S_grid'], ((INPUT_CONFIG['B_predictions']*5) + INPUT_CONFIG['C_classes']))))
         
         return darknet
 
