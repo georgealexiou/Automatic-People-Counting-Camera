@@ -15,8 +15,14 @@ class MathUtil:
 
     # Loss Function Helpers
 
+    '''
+    iou (Intersection over Union) helper
+    calculates
+    '''
     def iou(self, box_pred, box_actual):
         
+        # get edge coordinates by x/y_midpoint - x/y_width/2
+
         p_x1 = box_pred[:, :, :, :, 0:1] - box_pred[:, :, :, :, 2:3] / 2.0
         p_y1 = box_pred[:, :, :, :, 1:2] - box_pred[:, :, :, :, 3:4] / 2.0
         p_x2 = box_pred[:, :, :, :, 0:1] + box_pred[:, :, :, :, 2:3] / 2.0
@@ -27,28 +33,33 @@ class MathUtil:
         a_x2 = box_actual[:, :, :, :, 0:1] + box_actual[:, :, :, :, 2:3] / 2.0
         a_y2 = box_actual[:, :, :, :, 1:2] + box_actual[:, :, :, :, 3:4] / 2.0
 
-        # box1 = tf.stack(a_x1, a_y1, a_x2, a_x2)
-
-        x1 = tf.maximum(p_x1, a_x1)
-        y1 = tf.maximum(p_y1, a_y1)
-        x2 = tf.minimum(p_x2, a_x2)
-        y2 = tf.minimum(p_y2, a_y2)
+        x_min_pred = tf.minimum(p_x1, p_x2)
+        y_min_pred = tf.minimum(p_y1, p_y2)
+        x_max_pred = tf.maximum(p_x1, p_x2)
+        y_max_pred = tf.maximum(p_y1, p_y2)
+        
+        x_min_actual = tf.minimum(a_x1, a_x2)
+        y_min_actual = tf.minimum(a_y1, a_y2)
+        x_max_actual = tf.maximum(a_x1, a_x2)
+        y_max_actual = tf.maximum(a_y1, a_y2)
 
         # Overlap in X direction
-        x_over = x2-x1
-
+        x_over = tf.minimum(x_max_pred, x_max_actual) - tf.maximum(x_min_pred, x_min_actual)
+        
         # Overlap in Y direction
-
-        # Area of overlap
+        y_over = tf.minimum(y_max_pred, y_max_actual) - tf.maximum(y_min_pred, y_min_actual)
+        
+        # Area of overlap and boxes
+        intersection_area = x_over * y_over
 
         # Area of total - intersection
+        predicted_box_area = (x_max_pred - x_min_pred) * (y_max_pred - y_min_pred)
+        actual_box_area = (x_max_actual - x_min_actual) * (y_max_actual - y_min_actual)
 
-        inter_box = tf.maximum(0.0, right_down - left_up)
+        union_area = tf.maximum(predicted_box_area + actual_box_area - intersection_area, 1e-6)
 
-        return None
-
-
-
+        return tf.clip_by_value(intersection_area / union_area, 0.0, 1.0)
+ 
     # Activation Functions
 
     def leaky_relu(self, alpha):
