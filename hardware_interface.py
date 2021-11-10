@@ -93,6 +93,7 @@ class HardwareInterface:
     :returns: count (bytes)
     '''
 
+
     def get_single_result(img):
         pass
 
