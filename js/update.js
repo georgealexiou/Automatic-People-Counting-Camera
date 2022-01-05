@@ -31,29 +31,27 @@ var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
 }));
 cursor.lineY.set("visible", false);
 
-function formatData(){
-  console.log(CSVToArray("16:08:40,1\n16:08:40,2\n16:08:40,3\n16:08:40,4\n16:08:40,5\n16:08:40,6"));
-}
-
 
 // Generate random data
 var date = new Date();
 date.setHours(0, 0, 0, 0);
-var value = 100;
+var value = 0;
 
-function generateData() {
-  value = Math.round((Math.random() * 10 - 5) + value);
-  am5.time.add(date, "day", 1);
+function generatePair(data) {
+  value = parseInt(data[1]);
+  date = new Date();
+  date_raw = data[0].split(":")
+  date.setHours(date_raw[0],date_raw[1],date_raw[2], 0)
   return {
     date: date.getTime(),
     value: value
   };
 }
 
-function generateDatas(count) {
+function generateData(csvData) {
   var data = [];
-  for (var i = 0; i < count; ++i) {
-    data.push(generateData());
+  for (var i = 0; i<csvData.length-1; i++) {
+    data.push(generatePair(csvData[i]));
   }
   return data;
 }
@@ -96,7 +94,30 @@ chart.set("scrollbarX", am5.Scrollbar.new(root, {
   orientation: "horizontal"
 }));
 
+function updateData(text){
 
-// Set data
-var data = generateDatas(100);
-series.data.setAll(data);
+    data = CSVToArray(text);
+
+    var sum = 0;
+    for (var i = 0; i < data.length - 1; i++) {
+      sum += parseInt(data[i][1]);
+    }
+
+    var avg = sum/data.length;
+    if (avg>0) {
+      document.getElementById("avg_pop").innerHTML = avg;
+      document.getElementById("cur_pop").innerHTML = data[data.length - 1][1];
+      document.getElementById("status").innerHTML = "Data Found";
+
+      var generated = generateData(data);
+      console.log(generated);
+      series.data.setAll(generated);
+
+    } else {
+      document.getElementById("avg_pop").innerHTML = 0;
+      document.getElementById("cur_pop").innerHTML = 0;
+      document.getElementById("status").innerHTML = "Data Not Found";
+      document.getElementById("status").style.color = "red";
+    }
+
+}
