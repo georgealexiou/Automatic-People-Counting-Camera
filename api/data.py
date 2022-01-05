@@ -29,11 +29,11 @@ def save(count):
     #! need to figure out a device id
     if file_exists(date):
         with open('data/{}.csv'.format(date), mode='a', newline='') as f:
-            csv.writer(f).writerow([time, 'mbp', count])
+            csv.writer(f).writerow([time, count])
             f.close()
     else:
         with open('data/{}.csv'.format(date), mode='w', newline='') as f:
-            csv.writer(f).writerow([time, 'mbp', count])
+            csv.writer(f).writerow([time, count])
             f.close()
 
 '''
@@ -55,7 +55,6 @@ Returns data for a given date
 :return: String of data in the csv file for :param date:
 '''
 def get_date_data(date):
-    date = datetime.now().strftime('%d_%m_%Y')
     if file_exists(date):
         file = open('data/{date}.csv'.format(date=date))
         str = file.read()
@@ -65,5 +64,4 @@ def get_date_data(date):
     else:
         return 'The data that you have requested is unavailable'
 
-for i in range (1,10):
-    save(i)
+print(get_date_data('03_01_2022'))
