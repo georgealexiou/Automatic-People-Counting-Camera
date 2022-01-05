@@ -38,7 +38,8 @@
           <ul class="sidebar-body-menu">
             <li>
               <a class="active" href="/"><span class="icon home" aria-hidden="true"></span>Home</a>
-              <a class="inactive" href="https://github.com/Group-Design-Project/Part-4-Group-Project/tree/master"><span class="icon image" aria-hidden="true"></span>Repo</a>
+              <a class="inactive" href="https://github.com/Group-Design-Project/Part-4-Group-Project/tree/master"><span
+                  class="icon image" aria-hidden="true"></span>Repo</a>
               <a class="inactive" href="./reboot.html"> <span class="icon paper" aria-hidden="true"></span>Reboot</a>
             </li>
         </div>
@@ -97,7 +98,7 @@
                   <i data-feather="file" aria-hidden="true"></i>
                 </div>
                 <div class="stat-cards-info">
-                  <p class="stat-cards-info__num" style="color:#4bde97">Active</p>
+                  <p class="stat-cards-info__num" id="status" style="color:#4bde97">Active</p>
                   <p class="stat-cards-info__title">Status</p>
 
                 </div>
@@ -107,10 +108,10 @@
             </div>
           </div>
           <div id="chartdiv"></div>
-          </div>
         </div>
-
     </div>
+
+  </div>
   </div>
   </main>
   </footer>
@@ -126,8 +127,13 @@
   <script src="js/script.js"></script>
   <!-- Scipts to update values-->
   <script type="text/javascript" src="js/update.js"></script>
+  <script type="text/javascript" src="js/data.js"></script>
 
   <script>
+    var date = formatDate();
+    fetch("./data/"+ date + ".csv")
+      .then(response => response.text())
+      .then(text => updateData(text))
   </script>
 </body>
 
